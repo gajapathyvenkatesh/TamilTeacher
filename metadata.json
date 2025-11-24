@@ -1,0 +1,5 @@
+{
+  "name": "Tamil Kids Hangman",
+  "description": "An interactive, AI-powered Hangman game to teach Tamil words to kids using generated images and visual clues.",
+  "requestFramePermissions": []
+}

@@ -14,11 +14,23 @@ export interface GameImage {
 
 export enum GameStatus {
   IDLE = 'IDLE',
+  DIFFICULTY_SELECT = 'DIFFICULTY_SELECT',
   LOADING = 'LOADING',
   PLAYING = 'PLAYING',
   WON = 'WON',
   LOST = 'LOST',
-  ERROR = 'ERROR'
+  ERROR = 'ERROR',
+  SERIES_OVER = 'SERIES_OVER'
 }
 
-export const MAX_WRONG_GUESSES = 6;
+export enum Difficulty {
+  EASY = 'EASY',
+  MEDIUM = 'MEDIUM',
+  HARD = 'HARD'
+}
+
+export const GUESS_LIMITS: Record<Difficulty, number> = {
+  [Difficulty.EASY]: 8,
+  [Difficulty.MEDIUM]: 6,
+  [Difficulty.HARD]: 4,
+};

@@ -1,24 +1,37 @@
 import { GoogleGenAI, Type, Modality } from "@google/genai";
-import { GameWordData } from "../types";
+import { GameWordData, Difficulty } from "../types";
 
 // Initialize the API client
-// Ideally, this should be inside a function or hook if the key changes, 
-// but for this structure, we assume process.env.API_KEY is available globally as per instructions.
 const getAiClient = () => new GoogleGenAI({ apiKey: process.env.API_KEY });
 
-export const fetchWordData = async (): Promise<GameWordData> => {
+export const fetchWordData = async (difficulty: Difficulty, previousWords: string[] = []): Promise<GameWordData> => {
   const ai = getAiClient();
   
+  let difficultyPrompt = "";
+  switch (difficulty) {
+    case Difficulty.EASY:
+      difficultyPrompt = "Strictly generate a VERY SIMPLE Tamil word with only 2 or 3 letters/graphemes (e.g., கண், பால், கல்). The word must be a basic noun familiar to a toddler.";
+      break;
+    case Difficulty.MEDIUM:
+      difficultyPrompt = "Generate a common Tamil word with 3 to 5 letters/graphemes (e.g., மரம், சக்கரம்).";
+      break;
+    case Difficulty.HARD:
+      difficultyPrompt = "Generate a slightly longer or more complex Tamil word (5+ letters/graphemes) (e.g., வாழைப்பழம், பேருந்து).";
+      break;
+  }
+
   const prompt = `
-    Generate a single, simple Tamil word suitable for a child (kindergarten/primary school level).
-    Common categories: Animals, Fruits, Vegetables, Vehicles, Household Objects.
+    Generate a single Tamil word suitable for a children's game.
+    ${difficultyPrompt}
+    
+    IMPORTANT: Do NOT use any of these words: ${previousWords.join(', ')}.
     
     Return a JSON object with:
     - word: The Tamil word.
     - english: The English translation.
     - transliteration: How to pronounce it in English characters.
     - distractors: An array of 2 other simple English nouns (different from the target) to use as visual decoys.
-    - distractorLetters: An array of 10 random Tamil letters (vowels, consonants, or combined letters) that are NOT in the target word.
+    - distractorLetters: An array of 12 random Tamil letters (vowels, consonants, or combined letters) that are NOT in the target word.
   `;
 
   const response = await ai.models.generateContent({
